@@ -1,0 +1,89 @@
+#include <bits/stdc++.h>
+using namespace std;
+
+//前提として今回取り扱うのはN*Nの正方行列であり
+//それ以外の行列は取り扱えない
+
+int N,diff = 0;
+int A[1100][1100];
+bool flag[1100] = {};
+int table[1100][1100];
+
+void zeroswap(int &X){
+    if(X+1 == N){
+        cout << "この式の解は不定である" << endl;
+        exit(0);
+    }
+
+    for(int p = X+1;p < N;p++){
+        if(A[p][X] == 0){
+            if(p+1 == N){
+                cout << "この式の解は不定である" << endl;
+                exit(0);
+            }
+            continue;
+        }
+        diff = p;
+        break;
+    }
+    for(m,N+1){
+        swap(A[X][m],A[diff][m]);
+    }
+    return;
+}
+
+int gcd(int &X, int &Y) {
+	if (X < Y) gcd(Y, X);
+	int r;
+    if(Y == 0) return X;
+	while (r = X % Y) {
+		X = Y;
+		Y = r;
+	}
+	return Y;
+}
+
+
+int main() {
+    cin.tie(0);    
+	ios::sync_with_stdio(false);
+
+    cin >>N;
+    for(int i = 0;i < N;i++){
+      for(int j = 0;j < N+1;j++){
+        cin >> A[i][j];
+        table[i][j] = A[i][j];
+      }
+    }
+    for(int i = 0;i < N;i++) if(A[i][i] == 0) zeroswap(i);
+    for(int i = 0;i < N;i++) if(A[i][i] > 0) flag[i] = 1;
+
+    for(int i = 0;i < N;i++){
+        for(int j = 0;j < N;j++){
+            if(j == i) continue;
+            else{
+                for(int k = 0;k < N+1;k++){
+                    if(flag[j]) A[j][k] *= -1;
+                    table[j][k] = A[j][k];
+                    A[j][k] *= A[i][i];
+                    A[j][k] -= A[i][k] * table[j][i];
+                }
+            }    
+        }
+    }
+
+    for(int i = 0;i < N;i++){
+      if(A[i][i] == 0){
+        cout << "この式は解を持たない" << endl;
+        return 0;
+      }
+    }
+
+    for(int i = 0;i < N;i++){
+       if(A[i][N] % A[i][i] != 0){
+         int C = A[i][N],B = A[i][i],G = gcd(A[i][N],A[i][i]);
+         cout << i+1 << "個目の答えは　" << C/G << '/' << B/G << endl;
+       }
+        else cout << i+1 << "個目の答えは　" << A[i][N]/A[i][i] << endl;
+    }
+}
