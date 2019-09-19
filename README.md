@@ -1,4 +1,4 @@
-# original-row-reduction
+#row reduction
 自作した行列における掃き出し法です。
 
 # 目的
